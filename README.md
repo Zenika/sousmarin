@@ -1,14 +1,12 @@
-# Firmware
-
-See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
+# Sous marin
 
 ## Electronic
-
-The pinout of the Atmega can be found [here](https://i.pinimg.com/originals/a5/04/57/a504570b03287da7cdd419270ec49603.jpg).
 
 ![front](doc/front.jpg)
 
 ![beautiful](doc/back.jpg)
+
+The pinout of the Atmega can be found [here](https://i.pinimg.com/originals/a5/04/57/a504570b03287da7cdd419270ec49603.jpg).
 
 ## Import QMK firmware
 
@@ -28,13 +26,13 @@ git checkout <new_tag>
 
 ## Flash the Atmega
 
-Make example for this keyboard (after setting up your build environment):
+Compile:
 
 ```
 qmk compile -kb sousmarin -km default
 ```
 
-Example of flashing this keyboard:
+Flashing this keyboard:
 
 ```
 qmk flash -kb sousmarin -km default
