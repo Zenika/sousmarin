@@ -28,4 +28,6 @@ LEADER_ENABLE = no         # Leader key
 TAP_DANCE_ENABLE = no  		# Enable tad dance
 CAPS_WORD_ENABLE = no      # Caps word, modern Caps lock
 
+DEFERRED_EXEC_ENABLE = yes
+
 DIP_SWITCH_ENABLE = yes  # Enable dip switch (hardware slide switch)
