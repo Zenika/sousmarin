@@ -62,17 +62,21 @@ void led_off(void) {
     writePin(PIN_LED_ORANGE, LED_OFF);
     writePin(PIN_LED_RED   , LED_OFF);
 }
-
+bool orange = false;
 uint32_t orange_led_off(uint32_t trigger_time, void *cb_arg) {
-    writePin(PIN_LED_ORANGE, LED_OFF);
-    tap_code(FR_L);
+    if (orange) {
+        writePin(PIN_LED_ORANGE, LED_OFF);
+        tap_code(FR_L);
+        orange = false;
+    }
     return 0;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case ORANGE:
-            if (record->event.pressed) {
+            if (record->event.pressed && !orange) {
+                orange = true;
                 led_orange();
                 defer_exec(3000, orange_led_off, NULL);
             }
