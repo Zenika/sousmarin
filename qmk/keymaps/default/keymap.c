@@ -28,40 +28,30 @@
 enum custom_keycodes {
     ORANGE = SAFE_RANGE,
     UP, DOWN, FORWARD,
+    START, TOGGLE,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
     FORWARD, DOWN, UP,
-    ORANGE, FR_T, FR_P
+    ORANGE, TOGGLE, START
    )
 };
 
 int gauge = 50;
 
-void led_green(void) {
-    writePin(PIN_LED_GREEN , LED_ON);
-    writePin(PIN_LED_ORANGE, LED_OFF);
-    writePin(PIN_LED_RED   , LED_OFF);
-}
-
-void led_orange(void) {
-    writePin(PIN_LED_GREEN , LED_OFF);
+void leds_on(void) {
+    writePin(PIN_LED_GREEN,  LED_ON);
     writePin(PIN_LED_ORANGE, LED_ON);
-    writePin(PIN_LED_RED   , LED_OFF);
+    writePin(PIN_LED_RED,    LED_ON);
 }
 
-void led_red(void) {
-    writePin(PIN_LED_GREEN , LED_OFF);
-    writePin(PIN_LED_ORANGE, LED_OFF);
-    writePin(PIN_LED_RED   , LED_ON);
-}
-
-void led_off(void) {
+void leds_off(void) {
     writePin(PIN_LED_GREEN , LED_OFF);
     writePin(PIN_LED_ORANGE, LED_OFF);
     writePin(PIN_LED_RED   , LED_OFF);
 }
+
 bool orange = false;
 uint32_t orange_led_off(uint32_t trigger_time, void *cb_arg) {
     if (orange) {
@@ -77,31 +67,45 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ORANGE:
             if (record->event.pressed && !orange) {
                 orange = true;
-                led_orange();
+                writePin(PIN_LED_ORANGE, LED_ON);
                 defer_exec(3000, orange_led_off, NULL);
             }
             break;
-        case FR_P:
-            gauge = 50;
+        case START:
+            if (record->event.pressed) {
+                gauge = 50;
+                tap_code(KC_P);
+                leds_on();
+                wait_ms(200);
+                leds_off();
+                wait_ms(200);
+                leds_on();
+                wait_ms(200);
+                leds_off();
+                wait_ms(200);
+                leds_on();
+                wait_ms(200);
+                leds_off();
+            }
             break;
-        case FR_T:
+        case TOGGLE:
             if (record->event.pressed) {
                 writePin(PIN_LED_RED, LED_ON);
+                tap_code(KC_T);
             } else {
                 writePin(PIN_LED_RED, LED_OFF);
             }
             break;
         case FORWARD:
             if (record->event.pressed) {
-                led_green();
+                writePin(PIN_LED_GREEN, LED_ON);
                 tap_code(KC_SPACE);
             } else {
-                led_off();
+                writePin(PIN_LED_GREEN, LED_OFF);
             }
             break;
         case UP:
             if (record->event.pressed) {
-                led_off();
                 writePin(PIN_METER , LED_ON);
                 gauge = MAX(gauge - GAUGE_INCREMENT, 0);
                 tap_code(KC_UP);
@@ -173,16 +177,16 @@ void keyboard_pre_init_user(void) {
 
     setPinOutput(PIN_METER);
 
-    led_off();
+    leds_off();
 }
 
 int cpt = 0;
 void matrix_scan_user(void) {
     cpt++;
     if (cpt >= gauge && cpt < 100) {
-      writePin(PIN_METER , LED_ON);
+        writePin(PIN_METER, LED_ON);
     } else {
-      writePin(PIN_METER , LED_OFF);
+        writePin(PIN_METER, LED_OFF);
     }
     if (cpt >= 100) {
       cpt = 0;
