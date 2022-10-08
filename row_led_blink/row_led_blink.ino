@@ -3,25 +3,26 @@
 #define LED_ON 1
 #define LED_OFF 0
 
-const byte ledPin[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 2, 15 };
-ezButton button(14);
-byte potPin = A7;
+const byte ledPin[] = { PB12, PB13, PB14, PB15, PA1, PA9, PA10, PA0, PC15, PA15, PB3, PB4, PB5, PB6, PB7, PB10 };
+ezButton button(PB9);
+byte potPin = A2;
 
 byte led_count = sizeof(ledPin) / sizeof(ledPin[0]);
 
 void setup() {
-  Serial.begin(9600);
-  Serial.flush();
+//  Serial.begin(9600);
+//  Serial.flush();
   for (byte index = 0; index < led_count; index++) {
     pinMode(ledPin[index], OUTPUT);
   }
   pinMode(potPin, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 byte current_animation = 4;
-#define max_animation 3
+#define max_animation 6
 bool toggle_led = true;
-int speed_animation = 0;
+int speed_animation = 100; // fallback value
 
 void loop() {
   button.loop();
@@ -52,7 +53,26 @@ void loop() {
       animation_table();
       animation_linear(true);
       break;
+    case 5:
+      animation_single();
+      break;
   }
+  delay(speed_animation);
+
+}
+
+int single_anim_index = 0;
+void animation_single() {
+
+  if (single_anim_index > 0) {
+    digitalWrite(ledPin[single_anim_index - 1], LED_OFF);
+  }
+  if (((single_anim_index - 1) % led_count) < 0) {
+    digitalWrite(ledPin[led_count - 1], LED_OFF);
+  }
+  digitalWrite(ledPin[single_anim_index], LED_ON);
+
+  single_anim_index = (single_anim_index + 1) % led_count;
 }
 
 int linear_anim_index = 0;
@@ -78,7 +98,6 @@ void animation_linear(bool reverse) {
     linear_anim_index = 0;
     linear_anim_dir = 1;
   }
-  delay(speed_animation);
 }
 
 int table_anim_ledTime[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -10, 10, -5, 30};
@@ -102,9 +121,7 @@ void animation_table() {
         table_anim_ledTime[index] = value;
       }
     }
-
   }
-  delay(speed_animation);
 }
 
 byte k2000_anim_direction = 0;
@@ -134,7 +151,6 @@ void animation_k2000() {
       break;
   }
   display_binary(k2000_anim_number, k2000_led_count);
-  delay(speed_animation);
 }
 
 void display_table(byte row[]) {
