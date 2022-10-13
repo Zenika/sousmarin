@@ -56,7 +56,6 @@ bool orange = false;
 uint32_t orange_led_off(uint32_t trigger_time, void *cb_arg) {
     if (orange) {
         writePin(PIN_LED_ORANGE, LED_OFF);
-        tap_code(FR_L);
         orange = false;
     }
     return 0;
@@ -67,6 +66,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ORANGE:
             if (record->event.pressed && !orange) {
                 orange = true;
+                tap_code(FR_L);
                 writePin(PIN_LED_ORANGE, LED_ON);
                 defer_exec(3000, orange_led_off, NULL);
             }
@@ -109,14 +109,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 writePin(PIN_METER , LED_ON);
                 gauge = MAX(gauge - GAUGE_INCREMENT, 0);
-                tap_code(KC_UP);
+                register_code(KC_UP);
+            } else {
+                unregister_code(KC_UP);
             }
             break;
         case DOWN:
             if (record->event.pressed) {
                 writePin(PIN_METER , LED_OFF);
                 gauge = MIN(gauge + GAUGE_INCREMENT, 100);
-                tap_code(KC_DOWN);
+                register_code(KC_DOWN);
+            } else {
+                unregister_code(KC_DOWN);
             }
             break;
     }
