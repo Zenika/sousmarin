@@ -99,9 +99,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case FORWARD:
             if (record->event.pressed) {
                 writePin(PIN_LED_GREEN, LED_ON);
-                tap_code(KC_SPACE);
+                register_code(KC_SPACE);
             } else {
                 writePin(PIN_LED_GREEN, LED_OFF);
+                unregister_code(KC_SPACE);
             }
             break;
         case UP:
