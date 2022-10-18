@@ -152,6 +152,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
         case 3:
             if (active) {
                 tap_code(KC_S);
+                gauge = 50;
                 leds_off();
                 writePin(PIN_LED_RED, LED_ON);
                 wait_ms(400);
