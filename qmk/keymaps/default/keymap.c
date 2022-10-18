@@ -28,13 +28,17 @@
 enum custom_keycodes {
     ORANGE = SAFE_RANGE,
     UP, DOWN, FORWARD,
-    START, TOGGLE,
+    TORPILLE,
+};
+
+enum tap_dance {
+    START,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
     FORWARD, DOWN, UP,
-    ORANGE, TOGGLE, START
+    ORANGE, TORPILLE, TD(START)
    )
 };
 
@@ -69,31 +73,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(FR_L);
                 writePin(PIN_LED_ORANGE, LED_ON);
                 defer_exec(3000, orange_led_off, NULL);
-            }
-            break;
-        case START:
-            if (record->event.pressed) {
-                gauge = 50;
-                tap_code(KC_P);
-                leds_on();
-                wait_ms(200);
-                leds_off();
-                wait_ms(200);
-                leds_on();
-                wait_ms(200);
-                leds_off();
-                wait_ms(200);
-                leds_on();
-                wait_ms(200);
-                leds_off();
-            }
-            break;
-        case TOGGLE:
-            if (record->event.pressed) {
-                writePin(PIN_LED_RED, LED_ON);
-                tap_code(KC_T);
-            } else {
-                writePin(PIN_LED_RED, LED_OFF);
             }
             break;
         case FORWARD:
@@ -170,9 +149,60 @@ bool dip_switch_update_user(uint8_t index, bool active) {
                 previous = 1;
             }
             break;
+        case 3:
+            if (active) {
+                tap_code(KC_S);
+                leds_off();
+                writePin(PIN_LED_RED, LED_ON);
+                wait_ms(400);
+                writePin(PIN_LED_ORANGE, LED_ON);
+                wait_ms(400);
+                writePin(PIN_LED_GREEN, LED_ON);
+                wait_ms(400);
+                leds_off();
+            } else {
+                tap_code(KC_R);
+            }
+            break;
     }
     return true;
 }
+
+void start(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        gauge = 50;
+        leds_on();
+        wait_ms(200);
+        leds_off();
+        wait_ms(200);
+        leds_on();
+        wait_ms(200);
+        leds_off();
+        wait_ms(200);
+        leds_on();
+        wait_ms(200);
+        leds_off();
+        tap_code(KC_P);
+        reset_tap_dance(state);
+    } else if (state->count >= 2) {
+        leds_off();
+        writePin(PIN_LED_ORANGE, LED_ON);
+        wait_ms(150);
+        writePin(PIN_LED_ORANGE, LED_OFF);
+        wait_ms(150);
+        writePin(PIN_LED_ORANGE, LED_ON);
+        wait_ms(150);
+        writePin(PIN_LED_ORANGE, LED_OFF);
+        wait_ms(150);
+        tap_code(KC_X);
+        reset_tap_dance(state);
+    }
+}
+
+// Tap Dance definitions
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [START] = ACTION_TAP_DANCE_FN(start)
+};
 
 void keyboard_pre_init_user(void) {
     // Set our LED pins as output

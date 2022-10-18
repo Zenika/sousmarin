@@ -46,10 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // D4 : switch 1 position
 // D0, D1 : switch 3 positions
-#define DIP_SWITCH_PINS { D4, D0, D1 }
+#define DIP_SWITCH_PINS { D4, D0, D1, F7 }
 
 /* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
+
+#define TAPPING_TERM 600
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 20

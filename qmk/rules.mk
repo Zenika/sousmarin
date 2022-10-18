@@ -25,7 +25,7 @@ RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 ENCODER_ENABLE = no 				# Enable encoder
 LEADER_ENABLE = no         # Leader key
-TAP_DANCE_ENABLE = no  		# Enable tad dance
+TAP_DANCE_ENABLE = yes  		# Enable tad dance
 CAPS_WORD_ENABLE = no      # Caps word, modern Caps lock
 
 DEFERRED_EXEC_ENABLE = yes
