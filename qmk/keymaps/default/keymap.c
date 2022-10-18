@@ -169,22 +169,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 }
 
 void start(qk_tap_dance_state_t *state, void *user_data) {
-    if (state->count == 1) {
-        gauge = 50;
-        leds_on();
-        wait_ms(200);
-        leds_off();
-        wait_ms(200);
-        leds_on();
-        wait_ms(200);
-        leds_off();
-        wait_ms(200);
-        leds_on();
-        wait_ms(200);
-        leds_off();
-        tap_code(KC_P);
-        reset_tap_dance(state);
-    } else if (state->count >= 2) {
+    if (state->count >= 2) {
         leds_off();
         writePin(PIN_LED_ORANGE, LED_ON);
         wait_ms(150);
